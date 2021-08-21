@@ -1,118 +1,65 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <math.h>
 
 using namespace std;
 
 class loginManager
 {
-public:
-	
-	loginManager()
-	{
-		accessGranted = false;
-	}
-	void login()
-	{
-		cout << "Enter your username and password.\nUsername: ";
-		cin >> usernameAttempt;
-
-		username = getFile("username.dat");
-
-		if (usernameAttempt == username)
-		{
-			cout << "Password: ";
-			cin >> passwordAttempt;
-
-			password = getFile("passwords.dat");
-
-			if (passwordAttempt == password)
-			{
-				cout << "Logged in!";
-				cin.get();
-			}
-			else
-			{
-				cout << "Incorrect password\n";
-				login();
-			}
-		}
-		else
-		{
-			cout << "Incorrect username\n";
-			login();
-
-		}
-	}
-	string getFile(const char* p_fileName)
-	{
+	public:
 		
-		string line;
-		fstream file;
-
-		int eChar;
-
-		file.open(p_fileName, ios::in);
-		while(1)
+		loginManager()
 		{
-			file >> eChar;
-			if (eChar == 0)
+			accessGranted = 0;
+		}
+		void login()
+		{
+			cout << "Enter your username.\nUsername: ";
+			cin >> usernameAttempt;
+
+			username = getFile("usernames.txt");
+
+			if (usernameAttempt == username)
 			{
-				file.close();
-				return line;
+				cout << "Password: ";
+				cin >> passwordAttempt;
+
+				password = getFile("passwords.txt");
+
+				if (passwordAttempt == password)
+				{
+					cout << "Logged in!\n \nPress any button...";
+				}
 			}
-			line += (char)decrypt(eChar);
 		}
-		file.close();
-
-		return line;
-	}
-
-	void saveFile(string p_line, const char* p_fileName)
-	{
-
-		fstream file;
-		file.open(p_fileName, ios::out);
-
-		for (int i = 0; i < p_line.length(); i++)
+		string getFile(const char* p_fileName)
 		{
-			file << encrypt (p_line[i]);
-			file << "\n";
+			string line;
+			fstream file;
+
+			file.open(p_fileName, ios::in);
+			if (file.is_open())
+			{
+				getline(file, line);
+			}
+
+			file.close();
+
+			return line;
 		}
-
-		file << "0";
-		file.close();
-
-	}
-
-	int encrypt(int p_letter)
-	{
-
-		return powf(p_letter, 4);
-
-	}
-
-	int decrypt(int p_letter)
-	{
-
-		return powf(p_letter, 1/4.f);
-
-	}
 
 	private:
-		string password;
-		string username;
 		string usernameAttempt;
 		string passwordAttempt;
+		string password = "password";
+		string username = "user@email.com";
 		bool accessGranted;
 };
 
 int main()
 {
 	loginManager app;
-	app.saveFile("user@email.com","username.dat");
-	app.saveFile("password", "passwords.dat");
 	app.login();
+
 	cin.get();
 }
